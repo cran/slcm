@@ -3,7 +3,6 @@
 \docType{package}
 \name{slcm-package}
 \alias{slcm-package}
-\alias{_PACKAGE}
 \title{slcm: Sparse Latent Class Model for Cognitive Diagnosis}
 \description{
 Perform a Bayesian estimation of the exploratory Sparse Latent Class Model for Binary Data described by Chen, Y., Culpepper, S. A., and Liang, F. (2020) \doi{10.1007/s11336-019-09693-2}.
@@ -11,8 +10,8 @@ Perform a Bayesian estimation of the exploratory Sparse Latent Class Model for B
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/tmsalab/slcm}
   \item \url{https://tmsalab.github.io/slcm/}
+  \item \url{https://github.com/tmsalab/slcm}
   \item Report bugs at \url{https://github.com/tmsalab/slcm/issues}
 }
 

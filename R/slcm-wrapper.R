@@ -6,6 +6,24 @@ new_slcm_model = function(model_mcmc,
     estimate_chain = lapply(model_mcmc, summarize_model)
     estimates = c(estimate_chain, estimates)
     chain = model_mcmc[!(names(model_mcmc) %in% estimates)]
+    
+    
+    # Fix binary and order
+    attribute_description = attribute_pattern_table_header(details$k, 2, details$k)
+    colnames(estimates$beta$mean) <- paste0("B_", attribute_description)
+    rownames(estimates$beta$mean) <- paste0("Item", seq_len(details$j))
+    
+    colnames(estimates$theta$mean) <- paste0("Theta_", attribute_description)
+    rownames(estimates$theta$mean) <- paste0("Item", seq_len(details$j))
+    
+    colnames(estimates$delta) <- paste0("D_", attribute_description)
+    rownames(estimates$delta) <- paste0("Item", seq_len(details$j))
+    
+    colnames(estimates$q) <- paste0("Q_", seq_len(details$k))
+    rownames(estimates$q) <- paste0("Item", seq_len(details$j))
+    
+    names(estimates$pi$mean) <- attribute_description
+    
     structure(
         list(
             estimates = estimates, # Iterates over each parameter and obtains summary information
@@ -31,6 +49,8 @@ new_slcm_model = function(model_mcmc,
 #' @export
 print.slcm = function(x, digits = max(3L, getOption("digits") - 3L), ...) { 
   details = x$details
+  
+  
   cat("\nModel Details:\n",
       "- Observations (n): ", details$n, "\n",
       "- Items (j): ", details$j, "\n",
@@ -56,6 +76,7 @@ print.slcm = function(x, digits = max(3L, getOption("digits") - 3L), ...) {
   cat("\n\n")
   
   cat("Beta Coefficients:\n")
+  
   print.default(format(x$estimates$beta$mean, digits = digits), print.gap = 2L, 
                   quote = FALSE)
   
@@ -125,16 +146,19 @@ print.slcm = function(x, digits = max(3L, getOption("digits") - 3L), ...) {
 #' @export
 #'
 #' @examples
+#' # Load Namespace
+#' naming = requireNamespace("edmdata", quietly = TRUE)
+#' 
 #' # Use a demo data set from the paper
-#' if(requireNamespace("edmdata", quietly = TRUE)) {
-#'   data("items_matrix_reasoning", package = "edmdata")
+#' data("items_matrix_reasoning", package = "edmdata")
 #'   
-#'   burnin = 50        # Set for demonstration purposes, increase to at least 1,000 in practice.
-#'   chain_length = 100 # Set for demonstration purposes, increase to at least 10,000 in practice.  
+#' burnin = 50        # Set for demonstration purposes, increase to at least 1,000 in practice.
+#' chain_length = 100 # Set for demonstration purposes, increase to at least 10,000 in practice.  
 #'   
-#'   model_reasoning = slcm(items_matrix_reasoning, k = 4, 
-#'                          burnin = burnin, chain_length = chain_length)
-#' }
+#' model_reasoning = slcm(edmdata::items_matrix_reasoning, k = 4, 
+#'                        burnin = burnin, chain_length = chain_length)
+#'                          
+#' print(model_reasoning)
 slcm = function(
   y,
   k,
